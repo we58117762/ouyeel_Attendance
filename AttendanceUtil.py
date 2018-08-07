@@ -4,6 +4,7 @@ BY LEO 2018-8-3
 """
 
 import requests
+import json
 "**********************************README**************************************"
 '-API调用须知-'
 '调用API前需获取Access_Token'
@@ -24,22 +25,40 @@ class AttendanceUtil:
     __API_GETTOKEN = 'gettoken'                          # API - 获取access token的api
     __API_DEPARTMENT_LIST_IDS = 'department/list_ids'    # API - 获取部门id列表的api
     __API_USER_SIMPLELIST = 'user/simplelist'            # API - 获取部门人员简单信息的api
+    __API_ATTENDANCE_LIST_RECORD = 'attendance/listRecord' # API - 获取考勤信息
+
     __PARAM_CORPID = 'corpid'                            # PARAM - CORPID 参数名称
     __PARAM_CORPSECRET = 'corpsecret'                    # PARAM - CORPSECRET 参数名称
     __PARAM_ACCESS_TOKEN = 'access_token'                # PARAM - access token 参数名称
     __PARAM_ID = 'id'                                    # PARAM - id 参数名称（父部门）
     __PARAM_DEPARTMENT_ID = 'department_id'              # PARAM - department_id 参数名称（当前部门）
+
     __JSON_PARAM_SUB_DEPT_ID_LIST = 'sub_dept_id_list'   # JSON_PARAM - 参数名称（部门列表）
     __JSON_USERLIST = 'userlist'                         # JSON_PARAM - 参数名称（用户简单列表）
+    __JSON_USERIDS = 'userIds'
+    __JSON_CHECK_DATE_FROM = 'checkDateFrom'
+    __JSON_CHECK_DATE_TO = 'checkDateTo'
+    __JSON_RECORD_RESULT = 'recordresult'
 
     # 变量
     __CORP_ID = ''        # CORP_ID 是公司识别码
     __CORP_SECRET = ''    # CORP_SECRET 钉钉应用的识别码
     __AccessToken = ''    # 访问口令
 
+    # HTTP请求常量
+    __HTTP_CONTENT_TYPE = 'Content-Type'
+    __HTTP_CONTENT_TYPE_JSON = 'application/json'
+
+    __HTTP_CONTENT_ENCODING = 'Content-encoding'
+    __HTTP_CONTENT_ENCODING_UTF8 = 'UTF8'
+
     '私有 - 拼接api地址的方法'
     def _getfinalAPI(self, api):
         return self.__API_URL + api
+
+    '私有 - 拼接api地址的方法POST'
+    def _getfinalAPI_post(self, api):
+        return self.__API_URL + api + '?access_token=' + self.__AccessToken
 
     '公有 - 刷新accessToken的方法'
     def refreshAccessToken(self):
@@ -63,6 +82,20 @@ class AttendanceUtil:
         payload = {self.__PARAM_ACCESS_TOKEN: self.__AccessToken, self.__PARAM_DEPARTMENT_ID: department_id}
         response = requests.get(self._getfinalAPI(self.__API_USER_SIMPLELIST), params=payload)
         return response.json()[self.__JSON_USERLIST]
+
+    '公有 - 获取用户考勤信息的方法'
+    def getUserAttendanceInfo(self, userIdList, beginTime, endTime):
+        """userList不得超过50个"""
+        """开始时间和结束时间间隔最大为7天"""
+        headers = {self.__HTTP_CONTENT_TYPE: self.__HTTP_CONTENT_TYPE_JSON,
+                   self.__HTTP_CONTENT_ENCODING: self.__HTTP_CONTENT_ENCODING_UTF8}
+        data = {self.__JSON_USERIDS: userIdList,
+                self.__JSON_CHECK_DATE_FROM: beginTime,
+                self.__JSON_CHECK_DATE_TO: endTime}
+        response = requests.post(self._getfinalAPI_post(self.__API_ATTENDANCE_LIST_RECORD),
+                                 headers=headers,
+                                 json=data)
+        return response.json()[self.__JSON_RECORD_RESULT]
 
     '构造方法'
     def __init__(self, corp_id, corp_secret):
