@@ -25,7 +25,7 @@ class AttendanceUtil:
     __API_GETTOKEN = 'gettoken'                          # API - 获取access token的api
     __API_DEPARTMENT_LIST_IDS = 'department/list_ids'    # API - 获取部门id列表的api
     __API_USER_SIMPLELIST = 'user/simplelist'            # API - 获取部门人员简单信息的api
-    __API_ATTENDANCE_LIST_RECORD = 'attendance/listRecord' # API - 获取考勤信息
+    __API_ATTENDANCE_LIST = 'attendance/list'            # API - 获取考勤信息
 
     __PARAM_CORPID = 'corpid'                            # PARAM - CORPID 参数名称
     __PARAM_CORPSECRET = 'corpsecret'                    # PARAM - CORPSECRET 参数名称
@@ -35,10 +35,14 @@ class AttendanceUtil:
 
     __JSON_PARAM_SUB_DEPT_ID_LIST = 'sub_dept_id_list'   # JSON_PARAM - 参数名称（部门列表）
     __JSON_USERLIST = 'userlist'                         # JSON_PARAM - 参数名称（用户简单列表）
-    __JSON_USERIDS = 'userIds'
-    __JSON_CHECK_DATE_FROM = 'checkDateFrom'
-    __JSON_CHECK_DATE_TO = 'checkDateTo'
-    __JSON_RECORD_RESULT = 'recordresult'
+    __JSON_USERIDS = 'userIds'                           # JSON_PARAM - 用户ID列表
+    __JSON_WORK_DATE_FROM = 'workDateFrom'               # JSON_PARAM - 考勤开始时间
+    __JSON_WORK_DATE_TO = 'workDateTo'                   # JSON_PARAM - 考勤结束时间
+    __JSON_RECORD_RESULT = 'recordresult'                # JSON_PARAM - 考勤结果
+    __JSON_HAS_MORE = 'hasMore'                          # JSON_PARAM - 表明是否还有更多考勤数据
+    __JSON_OFFSET = 'offset'                             # JSON_PARAM - 考勤结果读取偏移量
+    __JSON_LIMIT = 'limit'                               # JSON_PARAM - 一次读取的结果条数
+
 
     # 变量
     __CORP_ID = ''        # CORP_ID 是公司识别码
@@ -89,13 +93,24 @@ class AttendanceUtil:
         """开始时间和结束时间间隔最大为7天"""
         headers = {self.__HTTP_CONTENT_TYPE: self.__HTTP_CONTENT_TYPE_JSON,
                    self.__HTTP_CONTENT_ENCODING: self.__HTTP_CONTENT_ENCODING_UTF8}
-        data = {self.__JSON_USERIDS: userIdList,
-                self.__JSON_CHECK_DATE_FROM: beginTime,
-                self.__JSON_CHECK_DATE_TO: endTime}
-        response = requests.post(self._getfinalAPI_post(self.__API_ATTENDANCE_LIST_RECORD),
-                                 headers=headers,
-                                 json=data)
-        return response.json()[self.__JSON_RECORD_RESULT]
+        """循环读取考勤结果"""
+        offset = 0
+        limit = 50
+        response = []
+        while True:
+            data = {self.__JSON_WORK_DATE_FROM: beginTime,
+                    self.__JSON_WORK_DATE_TO: endTime,
+                    self.__JSON_USERIDS: userIdList,
+                    self.__JSON_OFFSET: offset,
+                    self.__JSON_LIMIT: limit}
+            r = requests.post(self._getfinalAPI_post(self.__API_ATTENDANCE_LIST),
+                                     headers=headers,
+                                     json=data)
+            response.extend(r.json()[self.__JSON_RECORD_RESULT])
+            offset += limit
+            if r.json()[self.__JSON_HAS_MORE] is False:
+                break
+        return response
 
     '构造方法'
     def __init__(self, corp_id, corp_secret):
