@@ -18,10 +18,8 @@ CORP_SECRET = "FWGnzL06BnOh8S7vOctAYgvSumOuxQpE7Bc6wqdwCc4qdyP2uSRO0w7C9ggstocO"
 BEGIN_TIME = "2018-08-08 00:00:00"
 END_TIME = "2018-08-08 23:59:59"
 
-'*******************************************************************************'
-print(BEGIN_TIME)
-print(END_TIME)
 
+'**************************************函数声明*************************************'
 '辅助 - 列表排重'
 def getUniquList(unUniqueList):
     uniqueList = []
@@ -83,6 +81,7 @@ def getAttendanceResult_OnlyChecked(userIdList, userSimpleInfoDicList, beginTime
     return formatAttendanceInfoDicList
 
 
+'**************************************主要业务流程*************************************'
 ouyeelAttendance = AttendanceUtil(CORP_ID, CORP_SECRET)
 print('\n①获取ACCSESS_TOKEN:')
 print(ouyeelAttendance.getAccessToken())
