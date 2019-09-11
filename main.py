@@ -4,10 +4,10 @@ from ouyeel_Attendance.ouyeel_Attendance.AttendanceUtil import AttendanceUtil
 
 '********************************常量配置***************************************'
 'CORP_ID 是公司识别码'
-CORP_ID = "ding0yr83dhxnera2lon"
+CORP_ID = "xxxxxxxxxxxxxxxx"
 
 'CORP_SECRET 钉钉中考勤日报这个应用的识别码'
-CORP_SECRET = "YMwxF_izQLWT3SwnyIAvm1XDIioD4sCHXH2gwbEPvI1fPEOCCb_2U7jZOwB9pkds"
+CORP_SECRET = "xxxxxxxxxxxxxx"
 
 #BEGIN_TIME = time.strftime("%Y-%m-%d 00:00:00", time.localtime())
 #END_TIME = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
