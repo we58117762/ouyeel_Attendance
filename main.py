@@ -1,22 +1,19 @@
 '自动生成考勤日报并发布到微信群中'
 
-import time
-from AttendanceUtil import AttendanceUtil
-import requests
-
+from ouyeel_Attendance.ouyeel_Attendance.AttendanceUtil import AttendanceUtil
 
 '********************************常量配置***************************************'
 'CORP_ID 是公司识别码'
-CORP_ID = "dingc7fb31db15999b4435c2f4657eb6378f"
+CORP_ID = "xxxxxxxxxxxxxxxx"
 
 'CORP_SECRET 钉钉中考勤日报这个应用的识别码'
-CORP_SECRET = "FWGnzL06BnOh8S7vOctAYgvSumOuxQpE7Bc6wqdwCc4qdyP2uSRO0w7C9ggstocO"
+CORP_SECRET = "xxxxxxxxxxxxxx"
 
 #BEGIN_TIME = time.strftime("%Y-%m-%d 00:00:00", time.localtime())
 #END_TIME = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-BEGIN_TIME = "2018-08-08 00:00:00"
-END_TIME = "2018-08-08 23:59:59"
+BEGIN_TIME = "2019-09-11 19:00:00"
+END_TIME = "2019-09-11 23:59:59"
 
 
 '**************************************函数声明*************************************'

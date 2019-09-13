@@ -34,7 +34,7 @@ class AttendanceUtil:
     PARAM_DEPARTMENT_ID = 'department_id'              # PARAM - department_id 参数名称（当前部门）
 
     JSON_PARAM_SUB_DEPT_ID_LIST = 'sub_dept_id_list'   # JSON_PARAM - 参数名称（部门列表）
-    JSON_USERLIST = 'userlist'                         # JSON_PARAM - 参数名称（用户简单列表）
+    JSON_USERLIST = 'userIdList'                         # JSON_PARAM - 参数名称（用户简单列表）
     JSON_USER_ID = 'userid'
     JSON_USERID = 'userId'
     JSON_USERIDS = 'userIds'
@@ -107,13 +107,15 @@ class AttendanceUtil:
         while True:
             data = {self.JSON_WORK_DATE_FROM: beginTime,
                     self.JSON_WORK_DATE_TO: endTime,
-                    self.JSON_USERIDS: userIdList,
+                    self.JSON_USERLIST: userIdList,
                     self.JSON_OFFSET: offset,
                     self.JSON_LIMIT: limit}
             r = requests.post(self._getfinalAPI_post(self.API_ATTENDANCE_LIST),
                               headers=headers,
                               json=data)
+            print(r.text)
             response.extend(r.json()[self.JSON_RECORD_RESULT])
+
             offset += limit
             if r.json()[self.JSON_HAS_MORE] is False:
                 break
